@@ -337,3 +337,21 @@ Use this as a literal “from zero to live” runbook:
 
 Once you complete these steps, the smart contract runs autonomously on buildnet, and the frontend is available through a `.massa` domain—meeting the WaveHack requirement for “fully on-chain” frontends. You can now iterate (update the contract, redeploy, rebuild the frontend) by repeating steps 3–8 with your changes.
 
+---
+
+### 14. Funding your deployer wallet (faucet steps)
+
+Deploying on buildnet/testnet still consumes MAS. Follow this mini-playbook **before** `npm run deploy`:
+
+1. Copy your **public address** (starts with `AU…`) from Massa Station/Bearby.
+2. Join the official [Massa Discord](https://discord.gg/massa) and open the `#faucet` or `#buildnet-help` channel.
+3. Paste a short request such as:  
+   `Need buildnet MAS for WaveHack deployment. Address: AU1abc...`
+4. Wait for a moderator or faucet bot to confirm. (Never share your `S...` private key—only the public address.)
+5. Confirm the funds arrived:
+   ```powershell
+   massa-client wallet_info
+   ```
+   or check Massa Station’s balance view. Aim for ≥5 MAS.
+6. Return to step 5 in this guide and run `npm run deploy`. The error “Insufficient balance” disappears once the wallet is funded.
+
