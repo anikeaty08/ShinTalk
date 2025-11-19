@@ -175,6 +175,18 @@ The result is a fully on-chain UI (hosted on Massa) interacting with on-chain st
 
 ---
 
+### 9.1 Optional: Deploying to Vercel (centralized fallback)
+
+You can also publish the same Next.js build to Vercel if you need a traditional HTTPS endpoint:
+
+1. `vercel login`
+2. `cd apps/web`
+3. `vercel --prod`
+
+Remember: for WaveHack scoring, a DeWeb-hosted frontend is strongly preferred because it keeps the entire stack on-chain. Vercel is optional and should mirror the exact `.env` values (set them in the Vercel dashboard under Project Settings → Environment Variables).
+
+---
+
 ### 10. Starting a Completely New Project
 
 If you want to fork the idea or start a different Massa dApp:
@@ -233,4 +245,57 @@ To promote to mainnet later:
 6. **Deploy** the static build to Massa DeWeb for a fully on-chain experience.
 
 This workflow ensures there’s no centralized backend. Every feature—profiles, contacts, chat history, front-end hosting—is trustless and DeWeb compliant, which is exactly what WaveHack is looking for. Good luck, and feel free to duplicate these steps for any new Massa-powered project! 💧
+
+---
+
+### 13. Step-by-step deployment checklist
+
+Use this as a literal “from zero to live” runbook:
+
+1. **Prepare secrets**
+   - Export wallet keys (keep them private): `MASSA_PRIVATE_KEY`, `MASSA_PUBLIC_KEY`.
+   - Create `WEB3_STORAGE_TOKEN`.
+   - Fill `.env` with all entries listed in Section 4.
+2. **Install dependencies**
+   ```bash
+   npm install            # at project root
+   cd contracts/chat-contract && npm install
+   cd ../../apps/web && npm install
+   ```
+3. **Build & deploy the contract (buildnet)**
+   ```bash
+   cd contracts/chat-contract
+   npm run build
+   npm run deploy         # uses MASSA_* env vars
+   ```
+   Copy the printed `Contract deployed at:` address into `.env` as `NEXT_PUBLIC_CHAT_CONTRACT_ADDRESS`.
+4. **Verify ASC deployment**
+   - In `massa-client`, run `sc-get datastore <address> <key>` (optional) or use `/api/status` to ensure the contract responds after your first transactions.
+5. **Run the frontend locally**
+   ```bash
+   cd apps/web
+   npm run dev
+   ```
+   Connect your wallet, mint a profile, add a contact, send a test message.
+6. **Production build & lint**
+   ```bash
+   npm run lint
+   npm run build
+   ```
+7. **Upload to DeWeb**
+   ```bash
+   npm install -g @massalabs/deweb-cli
+   deweb-cli login
+   deweb-cli upload --dir .next
+   ```
+   Follow the CLI prompts to bind the uploaded bundle to a `.massa` domain (or create a new domain). This is what “deploying the frontend” means: hosting the React/Next.js build itself on Massa’s decentralized web.
+8. **(Optional) Vercel deploy** – only if you also want a conventional domain:
+   ```bash
+   vercel --prod
+   ```
+9. **Sanity checks**
+   - `curl` the `/api/status` endpoint hosted on your DeWeb domain.
+   - Open the DeWeb URL in a browser, connect the wallet, and send a message. Confirm that IPFS uploads succeed (look at the Network tab or terminal logs).
+
+Once you complete these steps, the smart contract runs autonomously on buildnet, and the frontend is available through a `.massa` domain—meeting the WaveHack requirement for “fully on-chain” frontends. You can now iterate (update the contract, redeploy, rebuild the frontend) by repeating steps 3–8 with your changes.
 
