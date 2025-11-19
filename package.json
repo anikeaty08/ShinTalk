@@ -1,0 +1,24 @@
+{
+  "name": "wavehack-chat",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WhatsApp-style fully on-chain chat for WaveHack built on Massa.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev:web": "npm run dev --workspace web",
+    "build:web": "npm run build --workspace web",
+    "lint:web": "npm run lint --workspace web",
+    "start:web": "npm run start --workspace web"
+  },
+  "workspaces": [
+    "apps/*",
+    "contracts/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "is-extglob": "^2.1.1"
+  }
+}
