@@ -65,6 +65,44 @@ APP_LABEL=WavehackChat
 
 ---
 
+#### 4.1 How to obtain the wallet keys & RPC values
+
+1. **Install a Massa wallet (recommended: Massa Station desktop)**
+   - Download from [https://station.massa.net](https://station.massa.net).
+   - Create a new account or import an existing mnemonic.
+   - Click **Accounts → Export private key** and enter your password. This gives you:
+     - `S...` string → use as `MASSA_PRIVATE_KEY` (and also `PRIVATE_KEY` if a library expects that exact name).
+     - `P...` string → use as `MASSA_PUBLIC_KEY`.
+   - Copy carefully; never commit these values.
+
+   *Alternative (Bearby extension):*
+   - Open Bearby → Settings → Account → “Export secret key”.
+   - That secret key is the same `S...` private key required for deployments.
+
+2. **Where to get `JSON_RPC_URL` / `MASSA_RPC_URL`**
+   - Use Massa’s public buildnet endpoint: `https://buildnet.massa.net/api/v2`.
+   - For public mainnet later, switch to `https://mainnet.massa.net/api/v2`.
+   - If you run a local node, point to `http://127.0.0.1:33035`.
+
+3. **Populate `.env`**
+   - Put the exported secret key line-for-line:
+     ```
+     MASSA_PRIVATE_KEY=Sxxxxxxxxxxxxxxxx
+     PRIVATE_KEY=Sxxxxxxxxxxxxxxxx       # optional alias used by massa-web3 deploy helper
+     MASSA_PUBLIC_KEY=Pxxxxxxxxxxxxxxxx
+     ```
+   - Double-check you’ve added `WEB3_STORAGE_TOKEN` (from the Web3.Storage dashboard) and the `MASSA_RPC_URL`.
+
+4. **Test the env variables**
+   ```powershell
+   # Windows PowerShell example
+   $env:MASSA_PRIVATE_KEY
+   $env:MASSA_RPC_URL
+   ```
+   If they echo the expected strings, the deploy script will pick them up. When you run `npm run deploy`, `Account.fromEnv` searches for `PRIVATE_KEY`, `PUBLIC_KEY`, `JSON_RPC_URL_PUBLIC` or the Massa-specific names—setting both the general and Massa-prefixed versions keeps every script happy.
+
+---
+
 ### 5. Smart Contract: Build + Deploy (Buildnet/Testnet)
 
 ```bash
